@@ -1,7 +1,9 @@
 "use client";
+
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 export default function ForgotPasswordForm() {
   const [email, setEmail] = useState("");
@@ -22,7 +24,7 @@ export default function ForgotPasswordForm() {
       const res = await axios.post(`${apiUrl}/otp`, {
         email,
         isResend,
-        isForgotPassword: true, // distinguish in backend
+        isForgotPassword: true,
       });
       if (res.status === 201) {
         setOtpSent(true);
@@ -52,7 +54,6 @@ export default function ForgotPasswordForm() {
       if (res.status === 200) {
         setMessage("Password reset successfully.");
         router.push("/login");
-        // Optionally redirect to login page
       }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -66,66 +67,90 @@ export default function ForgotPasswordForm() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white p-6 rounded-md shadow">
-      <h2 className="text-2xl font-semibold text-center">Forgot Password</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-md bg-white p-6 rounded-lg shadow-md">
+        <div className="flex justify-center items-center text-2xl font-bold tracking-tight mb-2">
+          <span className="text-[#6455D6] border border-[#6455D6] px-1 mr-1 rounded-md shadow-sm">
+            CODE
+          </span>
+          <span className="text-black">RANK</span>
+        </div>
+        <h2 className="text-center text-lg font-semibold text-gray-800 mb-4">
+          Forgot Password
+        </h2>
 
-      <div className="mt-4 space-y-4">
-        <input
-          type="email"
-          placeholder="Enter your registered email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="w-full border border-gray-300 px-4 py-2 rounded-md"
-        />
+        <div className="space-y-4">
+          <input
+            type="email"
+            placeholder="Enter your registered email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full border border-gray-300 px-4 py-2 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+          />
 
-        {!otpSent && (
-          <button
-            onClick={() => handleSendOtp()}
-            className="w-full bg-black text-white py-2 rounded-md"
-            disabled={loading || !email}
-          >
-            {loading ? "Sending OTP..." : "Send OTP"}
-          </button>
-        )}
-
-        {otpSent && (
-          <>
+          {!otpSent && (
             <button
-              onClick={() => handleSendOtp(true)}
-              className="text-sm text-indigo-600 hover:underline"
-              disabled={loading}
+              onClick={() => handleSendOtp()}
+              disabled={loading || !email}
+              className={`w-full flex justify-center items-center bg-black text-white py-2 rounded-md transition ${
+                loading || !email ? "opacity-60 cursor-not-allowed" : "hover:bg-gray-800 cursor-pointer"
+              }`}
             >
-              Resend OTP
+              {loading ? (
+                <Loader2 className="animate-spin w-5 h-5" />
+              ) : (
+                "Send OTP"
+              )}
             </button>
+          )}
 
-            <input
-              type="text"
-              placeholder="Enter OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              className="w-full border border-gray-300 px-4 py-2 rounded-md"
-            />
+          {otpSent && (
+            <>
+              <div className="text-right">
+                <button
+                  onClick={() => handleSendOtp(true)}
+                  disabled={loading}
+                  className="text-sm text-indigo-600 hover:underline cursor-pointer"
+                >
+                  Resend OTP
+                </button>
+              </div>
 
-            <input
-              type="password"
-              placeholder="Enter new password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full border border-gray-300 px-4 py-2 rounded-md"
-            />
+              <input
+                type="text"
+                placeholder="Enter OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                className="w-full border border-gray-300 px-4 py-2 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+              />
 
-            <button
-              onClick={handleResetPassword}
-              className="w-full bg-indigo-600 text-white py-2 rounded-md"
-              disabled={loading}
-            >
-              {loading ? "Resetting..." : "Reset Password"}
-            </button>
-          </>
-        )}
+              <input
+                type="password"
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="w-full border border-gray-300 px-4 py-2 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+              />
 
-        {message && <p className="text-green-600 text-sm">{message}</p>}
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+              <button
+                onClick={handleResetPassword}
+                disabled={loading}
+                className={`w-full flex justify-center items-center bg-indigo-600 text-white py-2 rounded-md transition ${
+                  loading ? "opacity-60 cursor-not-allowed" : "hover:bg-indigo-700 cursor-pointer"
+                }`}
+              >
+                {loading ? (
+                  <Loader2 className="animate-spin w-5 h-5" />
+                ) : (
+                  "Reset Password"
+                )}
+              </button>
+            </>
+          )}
+
+          {message && <p className="text-green-600 text-sm">{message}</p>}
+          {error && <p className="text-red-600 text-sm">{error}</p>}
+        </div>
       </div>
     </div>
   );

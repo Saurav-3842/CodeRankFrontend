@@ -6,7 +6,7 @@ import { milestones } from '@/constants/homepage/milestone/milestoneData';
 
 const Milestones = () => {
   return (
-    <section className="bg-white py-6 px-6 sm:py-15 sm:px-40">
+    <section id="milestones"  className="bg-white py-6 px-6 sm:py-15 sm:px-40 scroll-mt-16">
       <div className="text-center">
         <h2 className="text-4xl font-bold mb-12">Milestones</h2>
         <div className="flex justify-center items-center gap-6 flex-wrap">

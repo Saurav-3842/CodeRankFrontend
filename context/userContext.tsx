@@ -39,6 +39,9 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           console.log("AuthenUserData",userData);
           setUser(userData.data.user);
         }
+        else{
+          router.push('/login');
+        }
       } catch (error) {
         console.error('Failed to fetch user', error);
       } finally {

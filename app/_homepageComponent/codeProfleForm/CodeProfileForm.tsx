@@ -13,6 +13,7 @@ import { useSendOtp } from "@/hooks/useOtp";
 import { useSignup } from "@/hooks/useSignup";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 const CodeProfileForm = forwardRef((props, ref) => {
   const router = useRouter();
@@ -41,8 +42,8 @@ const CodeProfileForm = forwardRef((props, ref) => {
   }, [searchParams]);
   const [showModal, setShowModal] = useState(false);
   const [showCredentialModal, setShowCredentialModal] = useState(false);
-
-  const { sendOtp, loading } = useSendOtp();
+  const [canResendOtp, setCanResendOtp] = useState(false);
+  const { sendOtp, loading:loadingOTP } = useSendOtp();
   const {
     signup,
     loading: loadingSignup,
@@ -73,7 +74,7 @@ const CodeProfileForm = forwardRef((props, ref) => {
   const handleProfileSubmit = async () => {
     console.log("User Info:", formData);
     if (!formData.email) {
-      alert("Please enter an email address.");
+      toast.warn("Please enter an email address.");
       return;
     }
     setHasSubmitted(true);
@@ -83,9 +84,10 @@ const CodeProfileForm = forwardRef((props, ref) => {
     }
     if (success) {
       setShowModal(false);
+      setCanResendOtp(true); 
       setShowCredentialModal(true);
     } else if (error) {
-      alert(error);
+      console.log(error);
     }
   };
   const handleCredentialSubmit = async () => {
@@ -93,10 +95,13 @@ const CodeProfileForm = forwardRef((props, ref) => {
     console.log("User Info:", formData);
     await signup(formData);
     if (errorSignup) {
-      alert(errorSignup);
+      toast.warn(errorSignup);
     }
-    if (successSignup)return;
-    setShowCredentialModal(false);
+    if (successSignup){
+      toast.success("Sign up Successful!");
+      setShowCredentialModal(false);
+      return;
+    }
   };
   useImperativeHandle(ref, () => ({
     scrollToFullName: () => {
@@ -110,17 +115,17 @@ const CodeProfileForm = forwardRef((props, ref) => {
 
   const handleResendOtp = async () => {
     if (!formData.email) {
-      alert("Please enter your email first.");
+      toast.warn("Please enter your email first.");
       return;
     }
 
-    const { success, error } = await sendOtp(formData.email, true);
+    await sendOtp(formData.email, true);
 
-    if (success) {
-      alert("OTP resent successfully!");
-    } else if (error) {
-      alert(error);
-    }
+    // if (success) {
+    //   alert("OTP resent successfully!");
+    // } else if (error) {
+    //   alert(error);
+    // }
   };
 
   return (
@@ -207,7 +212,10 @@ const CodeProfileForm = forwardRef((props, ref) => {
         formData={formData}
         onChange={handleLinkChange}
         onSubmit={handleProfileSubmit}
-        loading={loading}
+        loadingOTP={loadingOTP}
+        onResendOtp={handleResendOtp}
+        hasSubmitted={hasSubmitted}
+        canResendOtp={canResendOtp}
       />
       <CredentialModal
         show={showCredentialModal}
@@ -218,7 +226,7 @@ const CodeProfileForm = forwardRef((props, ref) => {
         loadingSignup={loadingSignup}
         onChange={handleCredentialChange}
         onSubmit={handleCredentialSubmit}
-        loading={loading}
+        loadingOTP={loadingOTP}
         onResendOtp={handleResendOtp}
         hasSubmitted={hasSubmitted}
       />

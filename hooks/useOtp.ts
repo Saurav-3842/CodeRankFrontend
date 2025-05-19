@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 interface UseSendOtpResult {
   sendOtp: (email: string,isResnd:boolean) => Promise<{ success: boolean; error: string | null }>;
   loading: boolean;
@@ -19,22 +20,23 @@ export function useSendOtp(): UseSendOtpResult {
   setSuccess(false);
 
     try {
-      // Replace this URL with your backend endpoint
+      
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
       const response = await axios.post(`${apiUrl}/otp`, { email,isResend });
 
       if (response.status === 201) {
+        toast.success("OTP sent to your email!");
         setSuccess(true);
         return { success: true, error: null };
       }
       else if (response.status===409){
-        alert(response?.data?.message);
+        toast.error(response?.data?.message || "Email already exists. Please login.");
         router.push("/login");
         return { success: false, error: null };
         
     
       } else {
-        setError("Failed to send OTP. Please try again.");
+        toast.error("Failed to send OTP. Please try again.");
         return { success: false, error: "Failed to send OTP. Please try again." };
       }
     } catch (err: unknown) {
@@ -44,7 +46,7 @@ export function useSendOtp(): UseSendOtpResult {
       } else if (err instanceof Error) {
         errorMessage = err.message;
       }
-      setError(errorMessage);
+      toast.error(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);

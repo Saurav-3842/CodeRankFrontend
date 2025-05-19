@@ -4,7 +4,7 @@ import { Check, X } from "lucide-react";
 
 const ComparisonTable = () => {
   return (
-    <div className="bg-[#14101D] text-white py-16 px-4">
+    <div id="features" className="scroll-mt-4 bg-[#14101D] text-white py-16 px-4">
       <div className="max-w-6xl mx-auto text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-10">
           Why We Stand Out in Unifying <br />

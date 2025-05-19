@@ -6,7 +6,7 @@ export interface LeetCodeProfile {
     rank: number;
     problemsSolved: number;
     acceptanceRate: number;
-    badges: any[];
+    badges: string[];
     languageStats: {
       language: string;
       problemsSolved: number;
@@ -54,7 +54,7 @@ export interface LeetCodeProfile {
       language: string | null;
       description: string;
     }[];
-    badges: any[];
+    badges: string[];
     lastUpdated: string;
   }
   

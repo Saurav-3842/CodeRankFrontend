@@ -46,8 +46,7 @@ export function useSignup(): UseSignupResult {
         if (!userData) {
           throw new Error("User data not received from server");
         }
-        console.log("userData after signup",userData);
-        // Update user context with the received data
+        
         setUser(userData);
 
         setSuccess(true);
@@ -59,7 +58,7 @@ export function useSignup(): UseSignupResult {
       let errorMessage = "Something went wrong during sign-up.";
 
       if (axios.isAxiosError(err)) {
-        errorMessage = err.response?.data?.error || err.message || errorMessage;
+        errorMessage = err.response?.data?.message || err.message || errorMessage;
       } else if (err instanceof Error) {
         errorMessage = err.message;
       }

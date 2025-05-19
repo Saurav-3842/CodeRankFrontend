@@ -22,7 +22,7 @@ export default function Navbar({ onSignUpClick }: NavbarProps) {
 
         {/* Mobile menu button */}
         <button
-          className="md:hidden text-gray-700 focus:outline-none"
+          className="md:hidden text-gray-700 focus:outline-none cursor-pointer"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -78,7 +78,7 @@ export default function Navbar({ onSignUpClick }: NavbarProps) {
           </Link>
           <Link
             href="/login"
-            className="block border border-gray-300 text-black font-semibold px-4 py-2 rounded hover:bg-gray-100 transition"
+            className="block border border-gray-300 text-black text-center font-semibold px-4 py-2 rounded hover:bg-gray-100 transition"
             onClick={() => setIsOpen(false)}
           >
             Log In

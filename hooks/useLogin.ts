@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useUser } from "@/context/userContext";
 
 interface LoginFormData {
@@ -9,23 +9,21 @@ interface LoginFormData {
 }
 
 interface UseLoginResult {
-  login: (data: LoginFormData) => Promise<void>;
+  login: (data: LoginFormData) => Promise<{ success: boolean; message: string }>;
   loading: boolean;
-  error: string | null;
-  success: boolean;
+  
 }
 
 export function useLogin(): UseLoginResult {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  // const [error, setError] = useState<string | null>(null);
+  // const [success, setSuccess] = useState(false);
   const { setUser } = useUser();
-  const router = useRouter();
+  // const router = useRouter();
 
-  const login = async (data: LoginFormData) => {
+  const login = async (data: LoginFormData):Promise<{ success: boolean; message: string }> => {
     setLoading(true);
-    setError(null);
-    setSuccess(false);
+    
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -33,33 +31,28 @@ export function useLogin(): UseLoginResult {
         withCredentials: true,
       });
 
-      if (response.status === 200) {
-        const userData = response.data.data?.user || response.data.user;
+      const userData = response.data?.data?.user;
+      if (!userData) throw new Error("User data not received from server");
 
-        if (!userData) {
-          throw new Error("User data not received from server");
-        }
+      setUser(userData);
+      // router.push("/dashboard");
 
-        setUser(userData);
-        setSuccess(true);
-        router.push("/dashboard");
-      } else {
-        setError("Login failed. Please try again.");
-      }
+      return { success: true, message: "Logged in successfully!" };
+      
     } catch (err: unknown) {
       let errorMessage = "Something went wrong during login.";
 
       if (axios.isAxiosError(err)) {
-        errorMessage = err.response?.data?.error || err.message || errorMessage;
+        errorMessage = err.response?.data?.message || err.message || errorMessage;
       } else if (err instanceof Error) {
         errorMessage = err.message;
       }
 
-      setError(errorMessage);
+      return { success: false, message: errorMessage };
     } finally {
       setLoading(false);
     }
   };
 
-  return { login, loading, error, success };
+  return { login, loading };
 }

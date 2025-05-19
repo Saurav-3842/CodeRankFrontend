@@ -13,7 +13,7 @@ export default function Home() {
   const formRef = useRef<{ scrollToFullName: () => void }>(null);
   
   return (
-    <div className="">
+    <main >
       <Navbar onSignUpClick={() => formRef.current?.scrollToFullName()}/>
       <Suspense fallback={<div className="text-center text-white py-10">Loading form...</div>}>
         <CodeProfileForm ref={formRef} />
@@ -25,6 +25,6 @@ export default function Home() {
       <Milestones/>
       <Footer/>
         
-    </div>
+    </main>
   );
 }

@@ -1,5 +1,5 @@
-import React from 'react';
-
+import React from "react";
+import { FaSpinner } from "react-icons/fa";
 interface CredentialModalProps {
   show: boolean;
   onClose: () => void;
@@ -10,8 +10,8 @@ interface CredentialModalProps {
   onSubmit: () => void;
   loadingSignup: boolean;
   onResendOtp: () => void;
-   hasSubmitted: boolean;
-   loading: boolean;
+  hasSubmitted: boolean;
+  loadingOTP: boolean;
 }
 
 const CredentialModal: React.FC<CredentialModalProps> = ({
@@ -24,8 +24,8 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
   onSubmit,
   loadingSignup,
   onResendOtp,
-   hasSubmitted,
-   loading,
+  hasSubmitted,
+  loadingOTP,
 }) => {
   if (!show) return null;
 
@@ -34,19 +34,28 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
       <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-lg relative">
         <button
           onClick={onClose}
-          className="absolute top-2 right-3 text-gray-500 hover:text-black"
+          className="absolute top-2 right-3 text-gray-500 hover:text-black cursor-pointer"
         >
           ✕
         </button>
 
-        <h2 className="text-center text-xl font-bold text-black mb-4">
-          <span className="text-indigo-600">CODERANK</span> <br />
-          <span className="text-sm font-semibold">Just 1-Step Away</span>
+        <h2 className="text-center mb-6">
+          <div className="flex justify-center items-center text-2xl font-bold text-black tracking-tight">
+            <span className="text-[#6455D6] border border-[#6455D6] px-1 mr-1 rounded-md shadow-sm">
+              CODE
+            </span>
+            <span className="text-black">RANK</span>
+          </div>
+          <p className="mt-2 text-sm text-gray-600 font-medium">
+            Just One Step Away!
+          </p>
         </h2>
 
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-black">Email Address</label>
+            <label className="block text-sm font-semibold text-black">
+              Email Address
+            </label>
             <input
               type="email"
               name="email"
@@ -58,7 +67,9 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-black">Password</label>
+            <label className="block text-sm font-semibold text-black">
+              Password
+            </label>
             <input
               type="password"
               name="password"
@@ -70,7 +81,9 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-black">OTP</label>
+            <label className="block text-sm font-semibold text-black">
+              OTP
+            </label>
             <input
               type="text"
               name="otp"
@@ -82,28 +95,39 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
           </div>
 
           <button
-          disabled={loadingSignup}
+            disabled={loadingSignup}
             onClick={onSubmit}
-            className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 mt-4"
+            className={`w-full text-white py-2 rounded-md mt-4 transition-all flex items-center justify-center gap-2 ${
+              loadingSignup
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-black hover:bg-gray-800 cursor-pointer"
+            }`}
           >
-            Get CodeRank Certificate
+            {loadingSignup && (
+              <FaSpinner className="animate-spin w-5 h-5 text-white" />
+            )}
+            {loadingSignup ? "Creating Account..." : "Get CodeRank Certificate"}
           </button>
           {/* Resend OTP */}
-        {hasSubmitted && (
-          <div className="text-center mt-4">
-            <p className="text-sm text-gray-600">
-              Did not receive the OTP?{" "}
-              <button
-                type="button"
-                onClick={onResendOtp}
-                className="text-indigo-600 hover:underline font-medium disabled:opacity-50 cursor-pointer"
-                disabled={loading}
-              >
-                Resend OTP
-              </button>
-            </p>
-          </div>
-        )}
+          {hasSubmitted && (
+            <div className="text-center mt-4">
+              <p className="text-sm text-gray-600">
+                Did not receive the OTP?{" "}
+                <button
+                  type="button"
+                  onClick={onResendOtp}
+                  disabled={loadingOTP}
+                  className={`text-indigo-600 font-medium hover:underline ${
+                    loadingOTP
+                      ? "opacity-50 cursor-not-allowed"
+                      : "cursor-pointer"
+                  }`}
+                >
+                  {loadingOTP ? "Sending..." : "Resend OTP"}
+                </button>
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

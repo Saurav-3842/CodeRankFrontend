@@ -1,13 +1,17 @@
-"use client";
-import { useState, useEffect } from 'react';
-import {  BarChart2, Github } from 'lucide-react';
-import { ProfileData } from '@/types/profile';
+import { useState, useEffect } from "react";
+import { BarChart2, Github } from "lucide-react";
+import { ProfileData } from "@/types/profile";
 
 interface Props {
-  userId?: string; // Optional if you want to pass userId as prop
+  user?: {
+    _id: string;
+    email?: string;
+    fullname?: string;
+    college?: string;
+  }| null;
 }
 
-const ProfileStats = ({ userId }: Props) => {
+const ProfileStats = ({ user }: Props) => {
   const [data, setData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -18,23 +22,26 @@ const ProfileStats = ({ userId }: Props) => {
         setLoading(true);
         setError(null);
         const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-        // Replace with your actual API endpoint
-        const response = await fetch(`${apiUrl}/scrap-fetch/${userId || ''}`);
+        const response = await fetch(`${apiUrl}/scrap-fetch/${user?._id || ""}`);
         if (!response.ok) {
-          throw new Error('Failed to fetch profile data');
+          throw new Error("Failed to fetch profile data");
         }
         const result = await response.json();
-        console.log(result.data);
         setData(result.data[0]);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+        setError(err instanceof Error ? err.message : "An unknown error occurred");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProfileData();
-  }, [userId]);
+    if (user?._id) {
+      fetchProfileData();
+    } else {
+      setLoading(false);
+      setData(null);
+    }
+  }, [user?._id]);
 
   if (loading) {
     return (
@@ -66,6 +73,7 @@ const ProfileStats = ({ userId }: Props) => {
     );
   }
 
+  // Your existing rendering logic with data here
   const { github, leetcode } = data;
   const totalSolved = leetcode.problemsSolved;
   const totalTags = [
@@ -74,11 +82,19 @@ const ProfileStats = ({ userId }: Props) => {
     ...leetcode.tagStats.advanced,
   ];
 
-  // Calculate acceptance rate (adjust calculation as needed)
   const acceptanceRate = leetcode.acceptanceRate;
 
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-10">
+      {/* User info */}
+      <div className="bg-white shadow rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">{user?.fullname || "Username"}</h1>
+          <p className="text-gray-600">{user?.college || "College Name"}</p>
+        </div>
+        
+      </div>
+
       {/* LeetCode Section */}
       <div className="bg-white shadow rounded-2xl p-6">
         <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
@@ -98,13 +114,13 @@ const ProfileStats = ({ userId }: Props) => {
             <p className="text-lg font-semibold">#{leetcode.rank.toLocaleString()}</p>
             <p className="text-sm text-gray-500">Rank</p>
           </div>
-          <div className="bg-gray-100 p-4 rounded-lg text-center col-span-3">
+          <div className="bg-gray-100 p-4 rounded-lg text-center col-span-2 md:col-span-3">
             <p className="text-sm text-gray-500">Top Skills</p>
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="flex flex-wrap gap-2 mt-2 justify-center md:justify-start">
               {totalTags
                 .sort((a, b) => b.problemsSolved - a.problemsSolved)
                 .slice(0, 3)
-                .map(tag => (
+                .map((tag) => (
                   <span
                     key={tag.name}
                     className="bg-gray-200 px-2 py-1 text-xs rounded-full"
@@ -120,12 +136,10 @@ const ProfileStats = ({ userId }: Props) => {
           <div className="bg-gray-50 p-4 rounded-lg">
             <h3 className="font-semibold mb-2">Solutions by Language</h3>
             <ul className="space-y-2">
-              {leetcode.languageStats.map(lang => (
+              {leetcode.languageStats.map((lang) => (
                 <li key={lang.language} className="flex justify-between">
                   <span>{lang.language}</span>
-                  <span className="font-medium">
-                    {lang.problemsSolved} solved
-                  </span>
+                  <span className="font-medium">{lang.problemsSolved} solved</span>
                 </li>
               ))}
             </ul>
@@ -136,7 +150,7 @@ const ProfileStats = ({ userId }: Props) => {
               {totalTags
                 .sort((a, b) => b.problemsSolved - a.problemsSolved)
                 .slice(0, 4)
-                .map(tag => (
+                .map((tag) => (
                   <li key={tag.name} className="flex justify-between">
                     <span>{tag.name}</span>
                     <span className="font-medium">{tag.problemsSolved} problems</span>
@@ -173,15 +187,18 @@ const ProfileStats = ({ userId }: Props) => {
             <h3 className="font-semibold mb-2">Top Languages</h3>
             <div className="flex flex-wrap gap-2">
               {github.repositories
-                .filter(repo => repo.language)
+                .filter((repo) => repo.language)
                 .reduce((acc, repo) => {
                   if (repo.language && !acc.includes(repo.language)) {
                     acc.push(repo.language);
                   }
                   return acc;
                 }, [] as string[])
-                .map(lang => (
-                  <span key={lang} className="bg-gray-200 px-2 py-1 text-xs rounded-full">
+                .map((lang) => (
+                  <span
+                    key={lang}
+                    className="bg-gray-200 px-2 py-1 text-xs rounded-full"
+                  >
                     {lang}
                   </span>
                 ))}

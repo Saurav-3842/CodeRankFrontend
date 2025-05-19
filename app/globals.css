@@ -24,3 +24,24 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 } */
+@media print {
+  body {
+    background: white;
+  }
+
+  /* Hide navigation/sidebar elements */
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* Optional: remove shadows, colors, etc. for better print output */
+  /* .shadow, .bg-gray-100, .bg-gray-200, .bg-gray-50 {
+    box-shadow: none !important;
+    background: #fff !important;
+  } */
+
+  /* Improve spacing in print */
+  .p-4, .p-6 {
+    padding: 0.5rem !important;
+  }
+}

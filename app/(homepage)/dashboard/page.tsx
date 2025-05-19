@@ -2,15 +2,28 @@
 "use client";
 import { useUser } from "@/context/userContext";
 import ProfileStats from "./_dashboardComponent/profile-stat";
-// const userId='6821ea422314f753be24035c';
 export default function Home() {
     const { user } = useUser();
-    const userId = user?._id;
-    console.log(user);
+    
+    const handlePrint = () => {
+    window.print();
+  };
   return (
-    <div className="">
-      <h1 className="text-black">Dashboard PAge</h1> 
-      <ProfileStats userId={userId}/> 
+    <div className="p-4">
+      {/* Hide button during print */}
+      <div className="flex justify-end mb-4 print:hidden">
+        <button
+          onClick={handlePrint}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 cursor-pointer"
+        >
+          Print PDF
+        </button>
+      </div>
+
+      {/* This area will be printed */}
+      <div id="printable-content">
+        <ProfileStats user={user} />
+      </div>
     </div>
   );
 }

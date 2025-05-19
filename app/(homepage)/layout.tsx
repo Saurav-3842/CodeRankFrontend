@@ -6,13 +6,14 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
    
   return (
     <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <Sidebar />
+  <aside className="print:hidden bg-gray-800 text-white p-4">
+    <Sidebar />
+  </aside>
 
-      {/* Main content */}
-      <main className="flex-1 bg-white p-6">
-        {children}
-      </main>
-    </div>
+  <main className="flex-1 bg-gray-100 p-6">
+    {children} {/* Your dashboard page content */}
+  </main>
+</div>
+
   );
 }
