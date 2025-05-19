@@ -1,5 +1,5 @@
 'use client';
-import { useRef } from "react";
+import  { useRef, Suspense }from "react";
 import Navbar from "@/components/Navbar/navbar";
 import CodeProfileForm from "./_homepageComponent/codeProfleForm/CodeProfileForm";
 import CodeRankSteps from "./_homepageComponent/howCodeRankWork/codeRankSteps";
@@ -15,7 +15,9 @@ export default function Home() {
   return (
     <div className="">
       <Navbar onSignUpClick={() => formRef.current?.scrollToFullName()}/>
-      <CodeProfileForm ref={formRef}/>
+      <Suspense fallback={<div className="text-center text-white py-10">Loading form...</div>}>
+        <CodeProfileForm ref={formRef} />
+      </Suspense>
       <CodeRankSteps />
       <ComparisonTable/>
       <Banner onSignUpClick={() => formRef.current?.scrollToFullName()}/>

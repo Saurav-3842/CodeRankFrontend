@@ -95,10 +95,7 @@ const CodeProfileForm = forwardRef((props, ref) => {
     if (errorSignup) {
       alert(errorSignup);
     }
-    if (successSignup) {
-      console.log("signup-------------");
-      // router.push('/dashboard');
-    }
+    if (successSignup)return;
     setShowCredentialModal(false);
   };
   useImperativeHandle(ref, () => ({
