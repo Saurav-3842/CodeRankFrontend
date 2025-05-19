@@ -1,13 +1,11 @@
 import React from "react";
+type CodingProfiles = Record<"github" | "leetcode" | "codeforces", string>;
+
 
 interface ProfileLinksModalProps {
   show: boolean;
   onClose: () => void;
-  formData: {
-    github: string;
-    leetcode: string;
-    codeforces: string;
-  };
+  formData: CodingProfiles;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onSubmit: () => void;
   loading: boolean;
@@ -65,7 +63,7 @@ const ProfileLinksModal: React.FC<ProfileLinksModalProps> = ({
                 type="url"
                 placeholder={placeholder}
                 className="flex-1 border border-gray-300 px-4 py-2 rounded-md text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={(formData as any)[name]} // or formData[name as keyof typeof formData]
+                value={formData[name as keyof CodingProfiles]} // or formData[name as keyof typeof formData]
                 onChange={onChange}
               />
             </div>

@@ -11,7 +11,7 @@ export default function ForgotPasswordForm() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-const router = useRouter();
+  const router = useRouter();
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   const handleSendOtp = async (isResend = false) => {
@@ -28,8 +28,12 @@ const router = useRouter();
         setOtpSent(true);
         setMessage("OTP sent to your email.");
       }
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Something went wrong");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || "Something went wrong");
+      } else {
+        setError("Something went wrong");
+      }
     } finally {
       setLoading(false);
     }
@@ -50,8 +54,12 @@ const router = useRouter();
         router.push("/login");
         // Optionally redirect to login page
       }
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Failed to reset password");
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(err.response?.data?.message || "Failed to reset password");
+      } else {
+        setError("Failed to reset password");
+      }
     } finally {
       setLoading(false);
     }
@@ -121,6 +129,4 @@ const router = useRouter();
       </div>
     </div>
   );
-};
-
-// export default ForgotPasswordForm;
+}

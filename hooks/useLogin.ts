@@ -46,11 +46,15 @@ export function useLogin(): UseLoginResult {
       } else {
         setError("Login failed. Please try again.");
       }
-    } catch (err: any) {
-      const errorMessage =
-        err?.response?.data?.error ||
-        err.message ||
-        "Something went wrong during login.";
+    } catch (err: unknown) {
+      let errorMessage = "Something went wrong during login.";
+
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.error || err.message || errorMessage;
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+
       setError(errorMessage);
     } finally {
       setLoading(false);

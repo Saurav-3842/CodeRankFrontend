@@ -37,9 +37,15 @@ export function useSendOtp(): UseSendOtpResult {
         setError("Failed to send OTP. Please try again.");
         return { success: false, error: "Failed to send OTP. Please try again." };
       }
-    } catch (err: any) {
-      setError(err?.response?.data?.message || "Something went wrong.");
-      return { success: false, error: err?.response?.data?.message };
+    } catch (err: unknown) {
+      let errorMessage = "Something went wrong.";
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.message || err.message || errorMessage;
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }

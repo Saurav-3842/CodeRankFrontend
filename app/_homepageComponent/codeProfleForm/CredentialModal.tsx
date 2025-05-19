@@ -92,7 +92,7 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
         {hasSubmitted && (
           <div className="text-center mt-4">
             <p className="text-sm text-gray-600">
-              Didn't receive the OTP?{" "}
+              Did not receive the OTP?{" "}
               <button
                 type="button"
                 onClick={onResendOtp}

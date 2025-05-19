@@ -55,12 +55,17 @@ export function useSignup(): UseSignupResult {
       } else {
         setError("Sign up failed. Please try again.");
       }
-    } catch (err: any) {
-      const errorMessage = err?.response?.data?.error || 
-                         err.message || 
-                         "Something went wrong during sign-up.";
+    }catch (err: unknown) {
+      let errorMessage = "Something went wrong during sign-up.";
+
+      if (axios.isAxiosError(err)) {
+        errorMessage = err.response?.data?.error || err.message || errorMessage;
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+
       setError(errorMessage);
-    } finally {
+    }  finally {
       setLoading(false);
     }
   };
