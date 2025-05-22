@@ -1,4 +1,3 @@
-// app/providers.tsx
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
@@ -9,7 +8,7 @@ type User = {
   _id: string;
   fullname?: string;
   college?: string;
-  // Add other user fields as needed
+  
 };
 
 type UserContextType = {
@@ -40,7 +39,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
           setUser(userData.data.user);
         }
         else{
-          router.push('/login');
+          router.push('/');
         }
       } catch (error) {
         console.error('Failed to fetch user', error);

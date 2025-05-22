@@ -47,6 +47,9 @@ export default function Sidebar() {
           <Link href="/dashboard" className="block py-2 hover:underline">
             Home
           </Link>
+          <Link href="/leaderboard" className="block py-2 hover:underline">
+            Leader
+          </Link>
         </li>
         
       </ul>

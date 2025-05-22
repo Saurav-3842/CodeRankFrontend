@@ -30,6 +30,7 @@ const CodeProfileForm = forwardRef((props, ref) => {
     otp: "",
   });
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     if (searchParams.get("focus") === "fullname") {
@@ -54,6 +55,13 @@ const CodeProfileForm = forwardRef((props, ref) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+    setErrors((prev) => {
+      const updated = { ...prev };
+      delete updated[name];
+      return updated;
+    });
+  }
   };
   const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -67,8 +75,29 @@ const CodeProfileForm = forwardRef((props, ref) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Submitted:", formData);
-    setShowModal(true);
+  const newErrors: { [key: string]: string } = {};
+
+  if (!formData.fullname.trim()) {
+    newErrors.fullname = "Full name is required";
+  }
+
+  if (!formData.email.trim()) {
+    newErrors.email = "Email is required";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+    newErrors.email = "Invalid email format";
+  }
+
+  if (!formData.college.trim()) {
+    newErrors.college = "College name is required";
+  }
+
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    return;
+  }
+
+  setErrors({});
+  setShowModal(true);
     // Add submission logic
   };
   const handleProfileSubmit = async () => {
@@ -154,10 +183,15 @@ const CodeProfileForm = forwardRef((props, ref) => {
               name="fullname"
               type="text"
               placeholder="Enter your full name"
-              className="mt-1 w-full px-4 py-2 border rounded-md"
-              value={formData.fullname}
-              onChange={handleChange}
-            />
+              className={`mt-1 w-full px-4 py-2 border rounded-md ${
+      errors.fullname ? "border-red-500" : ""
+    }`}
+    value={formData.fullname}
+    onChange={handleChange}
+  />
+  {errors.fullname && (
+    <p className="text-xs text-red-500 mt-1">{errors.fullname}</p>
+  )}
           </div>
 
           <div>
@@ -170,11 +204,16 @@ const CodeProfileForm = forwardRef((props, ref) => {
               name="email"
               type="email"
               placeholder="Enter your email"
-              className="w-full px-4 py-2 border rounded-md"
+              className={`mt-1 w-full px-4 py-2 border rounded-md ${
+      errors.email ? "border-red-500" : ""
+    }`}
               value={formData.email}
+            
               onChange={handleChange}
             />
-
+{errors.email && (
+    <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+  )}
             <p className="text-xs text-gray-500 mt-1">
               We have a strict no-spam policy and will only contact you
               regarding your application.
@@ -190,10 +229,15 @@ const CodeProfileForm = forwardRef((props, ref) => {
               name="college"
               type="text"
               placeholder="Enter your college name"
-              className="mt-1 w-full px-4 py-2 border rounded-md"
+              className={`mt-1 w-full px-4 py-2 border rounded-md ${
+      errors.college ? "border-red-500" : ""
+    }`}
               value={formData.college}
               onChange={handleChange}
             />
+            {errors.college && (
+    <p className="text-xs text-red-500 mt-1">{errors.college}</p>
+  )}
           </div>
 
           <button
