@@ -23,6 +23,7 @@ export async function middleware(request: NextRequest) {
   const pathname = url.pathname;
 
   const isAuthed = token ? (await verifyToken(token)) !== null : false;
+  console.log(isAuthed);
 
   
   if (PROTECTED_ROUTES.some(route => pathname.startsWith(route))) {
