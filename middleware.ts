@@ -22,6 +22,9 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl.clone();
   const pathname = url.pathname;
 
+  console.log("Cookies seen by middleware:", request.cookies.getAll());
+  console.log("Token:", token);
+  console.log('JWT secret defined:', !!process.env.NEXT_PUBLIC_JWT_SECRET_KEY);
   const isAuthed = token ? (await verifyToken(token)) !== null : false;
   console.log(isAuthed);
 
