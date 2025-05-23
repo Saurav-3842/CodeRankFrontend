@@ -22,6 +22,7 @@ export default function LoginPage() {
     console.log("Logging in with", formData);
     try {
       const res = await login(formData);
+      console.log("Login Repsonse.... =====>>> ",res);
       if (res?.success) {
         toast.success(res.message);
         router.push("/dashboard");
