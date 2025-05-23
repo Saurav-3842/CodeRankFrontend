@@ -44,7 +44,7 @@ const CodeProfileForm = forwardRef((props, ref) => {
   const [showModal, setShowModal] = useState(false);
   const [showCredentialModal, setShowCredentialModal] = useState(false);
   const [canResendOtp, setCanResendOtp] = useState(false);
-  const { sendOtp, loading:loadingOTP } = useSendOtp();
+  const { sendOtp, loading: loadingOTP } = useSendOtp();
   const {
     signup,
     loading: loadingSignup,
@@ -56,12 +56,12 @@ const CodeProfileForm = forwardRef((props, ref) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) {
-    setErrors((prev) => {
-      const updated = { ...prev };
-      delete updated[name];
-      return updated;
-    });
-  }
+      setErrors((prev) => {
+        const updated = { ...prev };
+        delete updated[name];
+        return updated;
+      });
+    }
   };
   const handleLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -71,33 +71,40 @@ const CodeProfileForm = forwardRef((props, ref) => {
   const handleCredentialChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => {
+        const updated = { ...prev };
+        delete updated[name];
+        return updated;
+      });
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-  const newErrors: { [key: string]: string } = {};
+    const newErrors: { [key: string]: string } = {};
 
-  if (!formData.fullname.trim()) {
-    newErrors.fullname = "Full name is required";
-  }
+    if (!formData.fullname.trim()) {
+      newErrors.fullname = "Full name is required";
+    }
 
-  if (!formData.email.trim()) {
-    newErrors.email = "Email is required";
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-    newErrors.email = "Invalid email format";
-  }
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
 
-  if (!formData.college.trim()) {
-    newErrors.college = "College name is required";
-  }
+    if (!formData.college.trim()) {
+      newErrors.college = "College name is required";
+    }
 
-  if (Object.keys(newErrors).length > 0) {
-    setErrors(newErrors);
-    return;
-  }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
-  setErrors({});
-  setShowModal(true);
+    setErrors({});
+    setShowModal(true);
     // Add submission logic
   };
   const handleProfileSubmit = async () => {
@@ -107,26 +114,61 @@ const CodeProfileForm = forwardRef((props, ref) => {
       return;
     }
     setHasSubmitted(true);
+    
     const { success, error } = await sendOtp(formData.email, false);
     if (!success && error === "Email already exists! Please login") {
       router.push("/login");
     }
     if (success) {
       setShowModal(false);
-      setCanResendOtp(true); 
+      setCanResendOtp(true);
       setShowCredentialModal(true);
     } else if (error) {
       console.log(error);
     }
   };
+  const validatePassword = (password: string) => {
+    const errors: string[] = [];
+    if (password.length < 8) errors.push("must be at least 8 characters long");
+    if (!/[A-Z]/.test(password))
+      errors.push("must include at least one uppercase letter");
+    if (!/[a-z]/.test(password))
+      errors.push("must include at least one lowercase letter");
+    if (!/[0-9]/.test(password))
+      errors.push("must include at least one number");
+    if (!/[!@#$%^&*]/.test(password))
+      errors.push("must include at least one special character");
+
+    return errors;
+  };
   const handleCredentialSubmit = async () => {
-    console.log("Final Submission:");
-    console.log("User Info:", formData);
+    const passwordErrors = validatePassword(formData.password);
+
+    const newErrors: { [key: string]: string } = {};
+
+    if (passwordErrors.length > 0) {
+      newErrors.password = `Password ${passwordErrors.join(", ")}`;
+    }
+    if (!formData.password.trim()) {
+      newErrors.password = "Password is required";
+    }
+
+    if (!formData.otp.trim()) {
+      newErrors.otp = "OTP is required";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+
     await signup(formData);
     if (errorSignup) {
       toast.warn(errorSignup);
     }
-    if (successSignup){
+    if (successSignup) {
       toast.success("Sign up Successful!");
       setShowCredentialModal(false);
       return;
@@ -184,14 +226,14 @@ const CodeProfileForm = forwardRef((props, ref) => {
               type="text"
               placeholder="Enter your full name"
               className={`mt-1 w-full px-4 py-2 border rounded-md ${
-      errors.fullname ? "border-red-500" : ""
-    }`}
-    value={formData.fullname}
-    onChange={handleChange}
-  />
-  {errors.fullname && (
-    <p className="text-xs text-red-500 mt-1">{errors.fullname}</p>
-  )}
+                errors.fullname ? "border-red-500" : ""
+              }`}
+              value={formData.fullname}
+              onChange={handleChange}
+            />
+            {errors.fullname && (
+              <p className="text-xs text-red-500 mt-1">{errors.fullname}</p>
+            )}
           </div>
 
           <div>
@@ -205,15 +247,14 @@ const CodeProfileForm = forwardRef((props, ref) => {
               type="email"
               placeholder="Enter your email"
               className={`mt-1 w-full px-4 py-2 border rounded-md ${
-      errors.email ? "border-red-500" : ""
-    }`}
+                errors.email ? "border-red-500" : ""
+              }`}
               value={formData.email}
-            
               onChange={handleChange}
             />
-{errors.email && (
-    <p className="text-xs text-red-500 mt-1">{errors.email}</p>
-  )}
+            {errors.email && (
+              <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+            )}
             <p className="text-xs text-gray-500 mt-1">
               We have a strict no-spam policy and will only contact you
               regarding your application.
@@ -230,14 +271,14 @@ const CodeProfileForm = forwardRef((props, ref) => {
               type="text"
               placeholder="Enter your college name"
               className={`mt-1 w-full px-4 py-2 border rounded-md ${
-      errors.college ? "border-red-500" : ""
-    }`}
+                errors.college ? "border-red-500" : ""
+              }`}
               value={formData.college}
               onChange={handleChange}
             />
             {errors.college && (
-    <p className="text-xs text-red-500 mt-1">{errors.college}</p>
-  )}
+              <p className="text-xs text-red-500 mt-1">{errors.college}</p>
+            )}
           </div>
 
           <button
@@ -273,6 +314,7 @@ const CodeProfileForm = forwardRef((props, ref) => {
         loadingOTP={loadingOTP}
         onResendOtp={handleResendOtp}
         hasSubmitted={hasSubmitted}
+        errors={errors}
       />
     </div>
   );

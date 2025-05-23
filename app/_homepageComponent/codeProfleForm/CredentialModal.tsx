@@ -1,5 +1,5 @@
-import React from "react";
-import { FaSpinner } from "react-icons/fa";
+import React, { useState } from "react";
+import { FaSpinner, FaEye, FaEyeSlash } from "react-icons/fa";
 interface CredentialModalProps {
   show: boolean;
   onClose: () => void;
@@ -12,6 +12,7 @@ interface CredentialModalProps {
   onResendOtp: () => void;
   hasSubmitted: boolean;
   loadingOTP: boolean;
+  errors: { [key: string]: string };
 }
 
 const CredentialModal: React.FC<CredentialModalProps> = ({
@@ -26,7 +27,9 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
   onResendOtp,
   hasSubmitted,
   loadingOTP,
+  errors,
 }) => {
+  const [showPassword, setShowPassword] = useState(false);
   if (!show) return null;
 
   return (
@@ -60,24 +63,47 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
               type="email"
               name="email"
               placeholder="Enter your email address"
-              className="w-full border px-4 py-2 rounded-md text-black"
+              className={`mt-1 w-full px-4 py-2 border border-black rounded-md text-black ${
+                errors.email ? "border-red-500" : "border-black"
+              }`}
               value={email}
               onChange={onChange}
             />
+            {errors.email && (
+              <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+            )}
           </div>
 
-          <div>
+          {/* Password Input with toggle */}
+          <div className="">
             <label className="block text-sm font-semibold text-black">
               Password
             </label>
+            <div className="relative">
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               placeholder="Create your password"
-              className="w-full border px-4 py-2 rounded-md text-black"
+              className={` mt-1 w-full px-4 py-2 border rounded-md text-black ${
+                errors.password ? "border-red-500" : "border-black"
+              }`}
               value={password}
               onChange={onChange}
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute top-1/2 right-3 flex items-center justify-center h-full -translate-y-1/2  text-gray-500 hover:text-gray-700 cursor-pointer"
+              tabIndex={-1}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              style={{ lineHeight: 0 }}
+            >
+              {showPassword ?   <FaEye /> : <FaEyeSlash />}
+            </button>
+            </div>
+            {errors.password && (
+              <p className="text-xs text-red-500 mt-1">{errors.password}</p>
+            )}
           </div>
 
           <div>
@@ -88,10 +114,15 @@ const CredentialModal: React.FC<CredentialModalProps> = ({
               type="text"
               name="otp"
               placeholder="Enter the OTP sent to email"
-              className="w-full border px-4 py-2 rounded-md text-black"
+              className={`mt-1 w-full px-4 py-2 border border-black rounded-md text-black ${
+                errors.otp ? "border-red-500" : "border-black"
+              }`}
               value={otp}
               onChange={onChange}
             />
+            {errors.otp && (
+              <p className="text-xs text-red-500 mt-1">{errors.otp}</p>
+            )}
           </div>
 
           <button
