@@ -31,11 +31,14 @@ export function useLogin(): UseLoginResult {
         withCredentials: true,
       });
 
+      const token = response.data?.data?.token;
       const userData = response.data?.data?.user;
       if (!userData) throw new Error("User data not received from server");
 
       setUser(userData);
       // router.push("/dashboard");
+      
+      document.cookie = `token=${token}; Max-Age=3600; Domain=.code-rank-frontend.vercel.app; Path=/; Expires=Mon, 26 May 2025 08:19:19 GMT; HttpOnly; Secure; SameSite=None`;
 
       return { success: true, message: "Logged in successfully!" };
       
@@ -47,6 +50,7 @@ export function useLogin(): UseLoginResult {
       } else if (err instanceof Error) {
         errorMessage = err.message;
       }
+
 
       return { success: false, message: errorMessage };
     } finally {
