@@ -37,8 +37,12 @@ export function useLogin(): UseLoginResult {
 
       setUser(userData);
       // router.push("/dashboard");
+
+      console.log('document.cookie', document.cookie);
       
       document.cookie = `token=${token}; Max-Age=3600; Domain=.code-rank-frontend.vercel.app; Path=/; Expires=Mon, 26 May 2025 08:19:19 GMT; HttpOnly; Secure; SameSite=None`;
+
+      console.log('document.cookie', document.cookie);
 
       return { success: true, message: "Logged in successfully!" };
       
