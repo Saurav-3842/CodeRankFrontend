@@ -31,11 +31,18 @@ export function useLogin(): UseLoginResult {
         withCredentials: true,
       });
 
+      const token = response.data?.data?.token;
       const userData = response.data?.data?.user;
       if (!userData) throw new Error("User data not received from server");
 
       setUser(userData);
       // router.push("/dashboard");
+
+      console.log('document.cookie', document.cookie);
+
+      document.cookie = `token1=${token}; path=/; secure; SameSite=None; expires=` + new Date(Date.now() + 3600 * 1000).toUTCString();
+
+      console.log('document.cookie', document.cookie);
 
       return { success: true, message: "Logged in successfully!" };
       
@@ -47,6 +54,7 @@ export function useLogin(): UseLoginResult {
       } else if (err instanceof Error) {
         errorMessage = err.message;
       }
+
 
       return { success: false, message: errorMessage };
     } finally {
