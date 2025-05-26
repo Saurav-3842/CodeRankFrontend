@@ -39,8 +39,8 @@ export function useLogin(): UseLoginResult {
       // router.push("/dashboard");
 
       console.log('document.cookie', document.cookie);
-      
-      document.cookie = `token=${token}; Max-Age=3600; Domain=.code-rank-frontend.vercel.app; Path=/; Expires=Mon, 26 May 2025 08:19:19 GMT; HttpOnly; Secure; SameSite=None`;
+
+      document.cookie = `token1=${token}; path=/; secure; SameSite=None; expires=` + new Date(Date.now() + 3600 * 1000).toUTCString();
 
       console.log('document.cookie', document.cookie);
 

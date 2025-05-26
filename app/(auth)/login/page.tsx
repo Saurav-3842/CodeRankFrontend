@@ -21,7 +21,11 @@ export default function LoginPage() {
     e.preventDefault();
     console.log("Logging in with", formData);
     try {
+            console.log('document.cookie-1', document.cookie);
+
       const res = await login(formData);
+            console.log('document.cookie-2', document.cookie);
+
       console.log("Login Repsonse.... =====>>> ",res);
       if (res?.success) {
         toast.success(res.message);
