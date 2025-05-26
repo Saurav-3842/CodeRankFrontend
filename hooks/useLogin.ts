@@ -38,11 +38,11 @@ export function useLogin(): UseLoginResult {
       setUser(userData);
       // router.push("/dashboard");
 
-      console.log('document.cookie', document.cookie);
+      console.log('document.cookie##', document.cookie);
 
-      document.cookie = `token1=${token}; path=/; secure; SameSite=None; expires=` + new Date(Date.now() + 3600 * 1000).toUTCString();
+      document.cookie = `token=${token}; path=/; secure; SameSite=None; expires=` + new Date(Date.now() + 3600 * 1000).toUTCString();
 
-      console.log('document.cookie', document.cookie);
+      console.log('document.cookie##', document.cookie);
 
       return { success: true, message: "Logged in successfully!" };
       
